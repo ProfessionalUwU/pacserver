@@ -7,5 +7,8 @@ run:
 build:
     @dotnet build pacserver.csproj
 
-publish:
+publish: format
     @dotnet publish --configuration Release pacserver.csproj
+
+format:
+    @dotnet format
