@@ -7,9 +7,12 @@
         } else {
             switch (args[0]) {
                 case "determinePacmanCacheDirectory":
-                    Pacserver.determinePacmanCacheDirectory();
+                    Console.WriteLine(Pacserver.determinePacmanCacheDirectory());
                     break;
                 default:
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("Possible options are: determinePacmanCacheDirectory");
+                    Console.ResetColor();
                     break;
             }
         }
