@@ -6,7 +6,8 @@
             Console.ResetColor();
         } else {
             switch (args[0]) {
-                case "":
+                case "determinePacmanCacheDirectory":
+                    Pacserver.determinePacmanCacheDirectory();
                     break;
                 default:
                     break;

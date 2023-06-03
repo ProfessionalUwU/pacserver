@@ -1,6 +1,23 @@
+using System.Text.RegularExpressions;
+
 public class Pacserver {
     public static string pacmanCacheDirectory { get; set; } = string.Empty;
     public static string determinePacmanCacheDirectory() {
+        // string defaultPacmanCacheDirectory = "/var/cache/pacman/pkg/";
+
+        Regex regex = new Regex(@"\/(?:[\w.-]+\/)*[\w.-]+(?:\.\w+)*\/?$"); // https://regex101.com/r/GwWeui/2
+        string? line;
+        StreamReader file = new StreamReader(@"/etc/pacman.conf");
+        while ((line = file.ReadLine()) is not null) {
+            if (line.Contains("CacheDir")) {
+                Match match = regex.Match(line);
+                if (match.Success) {
+                    pacmanCacheDirectory = match.ToString();
+                }
+            }
+        }
+        file.Close();
+
         return pacmanCacheDirectory;
     }
 
