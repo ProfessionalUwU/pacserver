@@ -1,4 +1,6 @@
-﻿public class Program {
+﻿using Pacserver.Utils;
+
+public class Program {
     static void Main(string[] args) {
         if (args.Length == 0) {
             Console.ForegroundColor = ConsoleColor.Red;
@@ -7,7 +9,7 @@
         } else {
             switch (args[0]) {
                 case "determinePacmanCacheDirectory":
-                    Console.WriteLine(Pacserver.determinePacmanCacheDirectory());
+                    Console.WriteLine(PacserverUtils.determinePacmanCacheDirectory());
                     break;
                 default:
                     Console.ForegroundColor = ConsoleColor.Yellow;
