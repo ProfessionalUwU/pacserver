@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pacserver", "Pacserver\pacserver.csproj", "{2B605458-AFBE-4A78-B4EA-9562C82BC932}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacserver.Tests", "Pacserver.Tests\Pacserver.Tests.csproj", "{0B504958-E66D-4E32-AB22-19F94713AFCD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6FCF1241-CE3C-4A4A-8625-866A4E8E7623}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FCF1241-CE3C-4A4A-8625-866A4E8E7623}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FCF1241-CE3C-4A4A-8625-866A4E8E7623}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FCF1241-CE3C-4A4A-8625-866A4E8E7623}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B605458-AFBE-4A78-B4EA-9562C82BC932}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B605458-AFBE-4A78-B4EA-9562C82BC932}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B605458-AFBE-4A78-B4EA-9562C82BC932}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B605458-AFBE-4A78-B4EA-9562C82BC932}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B504958-E66D-4E32-AB22-19F94713AFCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B504958-E66D-4E32-AB22-19F94713AFCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B504958-E66D-4E32-AB22-19F94713AFCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B504958-E66D-4E32-AB22-19F94713AFCD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
