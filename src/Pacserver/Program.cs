@@ -6,17 +6,20 @@ public class Program {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("Please specify an option.");
             Console.ResetColor();
-        } else {
-            switch (args[0]) {
-                case "determinePacmanCacheDirectory":
-                    Console.WriteLine(PacserverUtils.determinePacmanCacheDirectory());
-                    break;
-                default:
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("Possible options are: determinePacmanCacheDirectory");
-                    Console.ResetColor();
-                    break;
-            }
+            Console.WriteLine("Possible options are: determinePacmanCacheDirectory");
+            return;
+        }
+
+        switch (args[0]) {
+            case "determinePacmanCacheDirectory":
+                Console.WriteLine(PacserverUtils.determinePacmanCacheDirectory());
+                break;
+            default:
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(args[0] + " is not a recognized option.");
+                Console.ResetColor();
+                Console.WriteLine("Possible options are: determinePacmanCacheDirectory");
+                break;
         }
     }
 }
