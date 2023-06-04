@@ -26,6 +26,23 @@ public class PacserverUtils {
 
     public static string pacmanDatabaseDirectory { get; set; } = string.Empty;
     public static string determinePacmanDatabaseDirectory() {
+        string defaultPacmanDatabaseDirectory = "/var/lib/pacman/";
+
+        Regex regex = new Regex(@"\/(?:[\w.-]+\/)*[\w.-]+(?:\.\w+)*\/?$"); // https://regex101.com/r/GwWeui/2
+        string? line;
+        StreamReader file = new StreamReader("/etc/pacman.conf");
+        while ((line = file.ReadLine()) is not null) {
+            if (line.Contains("DBPath")) {
+                Match match = regex.Match(line);
+                if (match.Success) {
+                    pacmanDatabaseDirectory = match.ToString();
+                } else {
+                    throw new Exception("Could not determine where pacman database is! Would normally be found here " + defaultPacmanDatabaseDirectory);
+                }
+            }
+        }
+        file.Close();
+
         return pacmanDatabaseDirectory;
     }
 
