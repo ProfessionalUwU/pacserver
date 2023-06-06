@@ -45,10 +45,7 @@ public class PacserverUtils {
         }
         request.Content = content;
 
-        HttpResponseMessage response = await client.SendAsync(request);
-        response.EnsureSuccessStatusCode();
-        string responseBody = await response.Content.ReadAsStringAsync();
-        Console.WriteLine(responseBody);
+        await client.SendAsync(request);
     }
 
     public static void transferPacmanDatabases() {
