@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
 
 namespace Pacserver.Utils;
@@ -33,8 +34,25 @@ public class PacserverUtils {
 
     }
 
-    public static void transferPacmanCache() {
+    private static List<String> NewerPackagesAndDatabases = new List<String>();
+    public static async void TransferPacmanCache() {
+        String sourceDir = pacmanCacheDirectory;
+        String destinationDir = "http://192.160.0.69:12000/upload/";
+        NewerPackagesAndDatabases.Add("tree-2.1.1-1-x86_64.pkg.tar.zst");
 
+        HttpClient client = new HttpClient();
+        HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "http://192.168.0.69:12000/upload?path=/");
+        MultipartFormDataContent content = new MultipartFormDataContent();
+
+        foreach (String PkgOrDb in NewerPackagesAndDatabases) {
+            content.Add(new ByteArrayContent(File.ReadAllBytes(pacmanCacheDirectory + PkgOrDb)), "path", Path.GetFileName(pacmanCacheDirectory + PkgOrDb));
+        }
+        request.Content = content;
+
+        HttpResponseMessage response = await client.SendAsync(request);
+        response.EnsureSuccessStatusCode();
+        string responseBody = await response.Content.ReadAsStringAsync();
+        Console.WriteLine(responseBody);
     }
 
     public static void transferPacmanDatabases() {
