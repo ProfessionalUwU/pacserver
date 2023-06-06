@@ -36,10 +36,6 @@ public class PacserverUtils {
 
     private static List<String> NewerPackagesAndDatabases = new List<String>();
     public static async void TransferPacmanCache() {
-        String sourceDir = pacmanCacheDirectory;
-        String destinationDir = "http://192.160.0.69:12000/upload/";
-        NewerPackagesAndDatabases.Add("tree-2.1.1-1-x86_64.pkg.tar.zst");
-
         HttpClient client = new HttpClient();
         HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "http://192.168.0.69:12000/upload?path=/");
         MultipartFormDataContent content = new MultipartFormDataContent();
