@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
 
 namespace Pacserver.Utils;
@@ -50,8 +51,18 @@ public class PacserverUtils {
 
     }
 
-    public static void transferPacmanCache() {
+    private static List<String> NewerPackagesAndDatabases = new List<String>();
+    public static async void TransferPacmanCache() {
+        HttpClient client = new HttpClient();
+        HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "http://192.168.0.69:12000/upload?path=/");
+        MultipartFormDataContent content = new MultipartFormDataContent();
 
+        foreach (String PkgOrDb in NewerPackagesAndDatabases) {
+            content.Add(new ByteArrayContent(File.ReadAllBytes(pacmanCacheDirectory + PkgOrDb)), "path", Path.GetFileName(pacmanCacheDirectory + PkgOrDb));
+        }
+        request.Content = content;
+
+        await client.SendAsync(request);
     }
 
     public static void transferPacmanDatabases() {
