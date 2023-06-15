@@ -17,15 +17,15 @@ run:
     @dotnet run
 
 build:
-    @dotnet build src/Pacserver/pacserver.csproj
-    @dotnet build src/Pacserver.Tests/Pacserver.Tests.csproj
+    @dotnet build src/{{uppercase_project_name}}/{{project_name}}.csproj
+    @dotnet build src/{{uppercase_project_name}}.Tests/{{uppercase_project_name}}.Tests.csproj
 
 publish: format
-    @dotnet publish --configuration Release src/Pacserver/pacserver.csproj
+    @dotnet publish --configuration Release src/{{uppercase_project_name}}/{{project_name}}.csproj
 
 format:
-    @dotnet format src/Pacserver
-    @dotnet format src/Pacserver.Tests
+    @dotnet format src/{{uppercase_project_name}}
+    @dotnet format src/{{uppercase_project_name}}.Tests
 
 test: build
-    @dotnet test src/Pacserver.Tests
+    @dotnet test src/{{uppercase_project_name}}.Tests
