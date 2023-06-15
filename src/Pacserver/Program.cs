@@ -12,7 +12,9 @@ public class Program {
 
         switch (args[0]) {
             case "determinePacmanCacheDirectory":
-                Console.WriteLine(PacserverUtils.determinePacmanCacheDirectory());
+                PacserverUtils utils = new PacserverUtils();
+                utils.readPacmanConfig();
+                Console.WriteLine(utils.pacmanCacheDirectory);
                 break;
             default:
                 Console.ForegroundColor = ConsoleColor.Red;

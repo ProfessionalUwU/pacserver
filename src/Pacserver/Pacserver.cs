@@ -3,69 +3,58 @@ using System.Text.RegularExpressions;
 
 namespace Pacserver.Utils;
 public class PacserverUtils {
-    public static string pacmanCacheDirectory { get; set; } = string.Empty;
-    public static string determinePacmanCacheDirectory() {
-        string defaultPacmanCacheDirectory = "/var/cache/pacman/pkg/";
-
-        Regex regex = new Regex(@"\/(?:[\w.-]+\/)*[\w.-]+(?:\.\w+)*\/?$"); // https://regex101.com/r/GwWeui/2
-        string? line;
-        StreamReader file = new StreamReader("/etc/pacman.conf");
-        while ((line = file.ReadLine()) is not null) {
-            if (line.Contains("CacheDir")) {
-                Match match = regex.Match(line);
-                if (match.Success) {
-                    pacmanCacheDirectory = match.ToString();
-                } else {
-                    throw new Exception("Could not determine where pacman cache is! Would normally be found here " + defaultPacmanCacheDirectory);
-                }
-            }
-        }
-        file.Close();
-
-        return pacmanCacheDirectory;
-    }
-
+    public string pacmanCacheDirectory { get; set; } = string.Empty;
     public static string pacmanDatabaseDirectory { get; set; } = string.Empty;
-    public static string determinePacmanDatabaseDirectory() {
-        string defaultPacmanDatabaseDirectory = "/var/lib/pacman/";
+    public static List<String> pathsToDetermine = new List<String>() { "CacheDir", "DBPath" };
+    public void readPacmanConfig() {
+        using (StreamReader file = new StreamReader("/etc/pacman.conf")) {
+            Regex regex = new Regex(@"\/(?:[\w.-]+\/)*[\w.-]+(?:\.\w+)*\/?$"); // https://regex101.com/r/GwWeui/2
+            string? line;
 
-        Regex regex = new Regex(@"\/(?:[\w.-]+\/)*[\w.-]+(?:\.\w+)*\/?$"); // https://regex101.com/r/GwWeui/2
-        string? line;
-        StreamReader file = new StreamReader("/etc/pacman.conf");
-        while ((line = file.ReadLine()) is not null) {
-            if (line.Contains("DBPath")) {
-                Match match = regex.Match(line);
-                if (match.Success) {
-                    pacmanDatabaseDirectory = match.ToString();
-                } else {
-                    throw new Exception("Could not determine where pacman database is! Would normally be found here " + defaultPacmanDatabaseDirectory);
+            while ((line = file.ReadLine()) is not null) {
+                foreach (string path in pathsToDetermine) {
+                    if (line.Contains(path)) {
+                        Match match = regex.Match(line);
+                        if (match.Success) {
+                            switch (path) {
+                                case "CacheDir":
+                                    pacmanCacheDirectory = match.ToString();
+                                    break;
+                                case "DBPath":
+                                    pacmanDatabaseDirectory = match.ToString();
+                                    break;
+                                default:
+                                    throw new Exception("Could not deal with " + match.ToString());
+                            }
+                        } else {
+                            string pathsToDetermineString = string.Join(",", pathsToDetermine);
+                            throw new Exception("Could not determine the necessary file paths: " + pathsToDetermineString);
+                        }
+                    }
                 }
             }
         }
-        file.Close();
-
-        return pacmanDatabaseDirectory;
     }
 
-    public static void checkForNewerPackagesAndDatabases() {
+    public void checkForNewerPackagesAndDatabases() {
 
     }
 
-    private static List<String> NewerPackagesAndDatabases = new List<String>();
-    public static async void TransferPacmanCache() {
+    private static List<String> newerPackagesAndDatabases = new List<String>();
+    public async void transferPacmanCache() {
         HttpClient client = new HttpClient();
         HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "http://192.168.0.69:12000/upload?path=/");
         MultipartFormDataContent content = new MultipartFormDataContent();
 
-        foreach (String PkgOrDb in NewerPackagesAndDatabases) {
-            content.Add(new ByteArrayContent(File.ReadAllBytes(pacmanCacheDirectory + PkgOrDb)), "path", Path.GetFileName(pacmanCacheDirectory + PkgOrDb));
+        foreach (string pkgOrDb in newerPackagesAndDatabases) {
+            content.Add(new ByteArrayContent(File.ReadAllBytes(pacmanCacheDirectory + pkgOrDb)), "path", Path.GetFileName(pacmanCacheDirectory + pkgOrDb));
         }
         request.Content = content;
 
         await client.SendAsync(request);
     }
 
-    public static void transferPacmanDatabases() {
+    public void transferPacmanDatabases() {
 
     }
 }
