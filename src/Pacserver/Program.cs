@@ -10,11 +10,24 @@ public class Program {
             return;
         }
 
+        PacserverUtils utils = new PacserverUtils();
+
         switch (args[0]) {
             case "determinePacmanCacheDirectory":
-                PacserverUtils utils = new PacserverUtils();
                 utils.readPacmanConfig();
                 Console.WriteLine(utils.pacmanCacheDirectory);
+                break;
+            case "before":
+                utils.readPacmanConfig();
+                utils.getEveryPackageNameAndVersionViaFolderName("/tmp/before_update.txt");
+                break;
+            case "after":
+                utils.readPacmanConfig();
+                utils.getEveryPackageNameAndVersionViaFolderName("/tmp/after_update.txt");
+                break;
+            case "diff":
+                utils.checkForNewerPackages();
+                Console.WriteLine(utils.newerPackages);
                 break;
             default:
                 Console.ForegroundColor = ConsoleColor.Red;

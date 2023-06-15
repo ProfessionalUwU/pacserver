@@ -3,8 +3,8 @@ using System.Text.RegularExpressions;
 
 namespace Pacserver.Utils;
 public class PacserverUtils {
-    public string pacmanCacheDirectory { get; set; } = string.Empty;
-    public static string pacmanDatabaseDirectory { get; set; } = string.Empty;
+    public string pacmanCacheDirectory = string.Empty;
+    public static string pacmanDatabaseDirectory = string.Empty;
     public static List<String> pathsToDetermine = new List<String>() { "CacheDir", "DBPath" };
     public void readPacmanConfig() {
         using (StreamReader file = new StreamReader("/etc/pacman.conf")) {
@@ -36,8 +36,22 @@ public class PacserverUtils {
         }
     }
 
-    public void checkForNewerPackagesAndDatabases() {
+    private List<String> packageNamesAndVersion = new List<String>();
+    public void getEveryPackageNameAndVersionViaFolderName(string filePath) {
+        string[] directories = Directory.GetDirectories(pacmanDatabaseDirectory + "local/");
+        foreach (string directory in directories) {
+            packageNamesAndVersion.Add(new DirectoryInfo(directory).Name);
+        }
+        File.WriteAllLines(filePath, packageNamesAndVersion);
+    }
 
+    public List<String> newerPackages = new List<String>();
+    public void checkForNewerPackages() {
+        if (File.Exists("/tmp/before_update.txt") && File.Exists("/tmp/after_update.txt")) {
+            newerPackages = File.ReadAllLines("/tmp/after_update.txt").Except(File.ReadLines("/tmp/before_update.txt")).ToList();
+        } else {
+            throw new FileNotFoundException("Necessary files could not be found");
+        }
     }
 
     private static List<String> newerPackagesAndDatabases = new List<String>();
