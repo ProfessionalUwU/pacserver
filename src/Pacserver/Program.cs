@@ -6,7 +6,7 @@ public class Program {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("Please specify an option.");
             Console.ResetColor();
-            Console.WriteLine("Possible options are: determinePacmanCacheDirectory");
+            Console.WriteLine("Possible options are: determinePacmanCacheDirectory, packagesBefore, packagesAfter, diffPackages, databasesBefore, databasesAfter, diffDatabases");
             return;
         }
 
@@ -17,17 +17,31 @@ public class Program {
                 utils.readPacmanConfig();
                 Console.WriteLine(utils.pacmanCacheDirectory);
                 break;
-            case "before":
+            case "packagesBefore":
                 utils.readPacmanConfig();
                 utils.getEveryPackageNameAndVersionViaFolderName("/tmp/before_update.txt");
                 break;
-            case "after":
+            case "packagesAfter":
                 utils.readPacmanConfig();
                 utils.getEveryPackageNameAndVersionViaFolderName("/tmp/after_update.txt");
                 break;
-            case "diff":
-                utils.checkForNewerPackages();
-                Console.WriteLine(utils.newerPackages);
+            case "diffPackages":
+                utils.diff("/tmp/before_update.txt", "/tmp/after_update.txt");
+                string packages = string.Join(",", utils.diffOfPackagesOrDatabases);
+                Console.WriteLine(packages);
+                break;
+            case "databasesBefore":
+                utils.readPacmanConfig();
+                utils.checkIfDatabasesWereModified("before", "/tmp/databases_before.txt");
+                break;
+            case "databasesAfter":
+                utils.readPacmanConfig();
+                utils.checkIfDatabasesWereModified("after", "/tmp/databases_after.txt");
+                break;
+            case "diffDatabases":
+                utils.diff("/tmp/databases_before.txt", "/tmp/databases_after.txt");
+                string databases = string.Join(",", utils.diffOfPackagesOrDatabases);
+                Console.WriteLine(databases);
                 break;
             default:
                 Console.ForegroundColor = ConsoleColor.Red;
