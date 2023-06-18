@@ -19,14 +19,14 @@ public class Program {
                 break;
             case "packagesBefore":
                 utils.readPacmanConfig();
-                utils.getEveryPackageNameAndVersionViaFolderName("/tmp/before_update.txt");
+                utils.getEveryPackageNameAndVersion("before", "/tmp/packages_before.txt");
                 break;
             case "packagesAfter":
                 utils.readPacmanConfig();
-                utils.getEveryPackageNameAndVersionViaFolderName("/tmp/after_update.txt");
+                utils.getEveryPackageNameAndVersion("after", "/tmp/packages_after.txt");
                 break;
             case "diffPackages":
-                utils.diff("/tmp/before_update.txt", "/tmp/after_update.txt");
+                utils.diff("/tmp/packages_before.txt", "/tmp/packages_after.txt");
                 string packages = string.Join("\n", utils.diffOfPackagesOrDatabases);
                 Console.WriteLine(packages);
                 break;
@@ -48,6 +48,12 @@ public class Program {
                 utils.filterDiffOutputForDatabases();
                 string filteredDatabases = string.Join("\n", utils.databasesToTransfer);
                 Console.WriteLine(filteredDatabases);
+                break;
+            case "getEveryPackageInCache":
+                utils.readPacmanConfig();
+                utils.getEveryPackageNameAndVersion("before", "/tmp/packages_before.txt");
+                string allPackages = string.Join("\n", utils.packageNamesAndVersion);
+                Console.WriteLine(allPackages);
                 break;
             default:
                 Console.ForegroundColor = ConsoleColor.Red;

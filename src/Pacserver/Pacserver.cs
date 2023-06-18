@@ -37,16 +37,45 @@ public class PacserverUtils {
     }
 
     public List<String> packageNamesAndVersion = new List<String>();
-    public void getEveryPackageNameAndVersionViaFolderName(string filePath) {
-        string[] directories = Directory.GetDirectories(pacmanDatabaseDirectory + "local/");
-        foreach (string directory in directories) {
-            packageNamesAndVersion.Add(new DirectoryInfo(directory).Name);
+    public void getEveryPackageNameAndVersion(string mode, string filePath) {
+        Regex regex = new Regex(@".+\.pkg\.tar\.zst$");
+
+        if (Directory.Exists(pacmanCacheDirectory)) {
+            if (Directory.GetFiles(pacmanCacheDirectory) is not null) {
+                packageNamesAndVersion = Directory.GetFiles(pacmanCacheDirectory).Where(file => regex.IsMatch(file)).ToList();
+            } else {
+                Console.WriteLine("No packages found in pacman cache");
+            }
+        } else {
+            Console.WriteLine("No pacman cache directory found");
         }
 
-        if (packageNamesAndVersion.Capacity > 0) {
-            File.WriteAllLines(filePath, packageNamesAndVersion);
-        } else {
-            throw new Exception("How did you execute this without any packages?");
+        switch (mode) {
+            case "before":
+                writePackageNamesAndVersionToFile(filePath);
+                break;
+            case "after":
+                writePackageNamesAndVersionToFile(filePath);
+                break;
+            default:
+                throw new ArgumentException("No valid mode was given. Valid modes are before and after");
+        }
+    }
+
+    public void writePackageNamesAndVersionToFile(string filePath) {
+        if (!File.Exists(filePath)) {
+            using (File.Open(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite)) {
+                using (StreamWriter sw = new StreamWriter(filePath)) {
+                    sw.WriteLine("");
+                }
+            }
+        } else if (File.Exists(filePath)) {
+            File.Delete(filePath);
+            using (File.Open(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite)) {
+                using (var sw = new StreamWriter(filePath)) {
+                    sw.WriteLine("");
+                }
+            }
         }
     }
 
@@ -85,8 +114,9 @@ public class PacserverUtils {
                 }
             }
         } else if (File.Exists(filePath)) {
-            using (File.Open(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite)) {
-                using (var sw = new StreamWriter(filePath, true)) {
+            File.Delete(filePath);
+            using (File.Open(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite)) {
+                using (var sw = new StreamWriter(filePath)) {
                     sw.WriteLine(database + " " + File.GetLastAccessTime(database));
                 }
             }
