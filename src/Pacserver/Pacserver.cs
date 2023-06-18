@@ -63,46 +63,32 @@ public class PacserverUtils {
     public void checkIfDatabasesWereModified(string mode, string filePath) {
         string[] databases = Directory.GetFiles(pacmanDatabaseDirectory + "sync/");
 
-        // if (mode == "nuke") {
-        //     using (File.Open(filePath, FileMode.Truncate, FileAccess.ReadWrite, FileShare.Delete)) {
-        //         File.Delete(filePath);
-        //     }
-        // }
-
         foreach (string database in databases) {
             switch (mode) {
                 case "before":
-                    if (!File.Exists(filePath)) {
-                        using (File.Open(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite)) {
-                            using (StreamWriter sw = new StreamWriter(filePath)) {
-                                sw.WriteLine(database + " " + File.GetLastAccessTime(database));
-                            }
-                        }
-                    } else if (File.Exists(filePath)) {
-                        using (File.Open(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite)) {
-                            using (var sw = new StreamWriter(filePath, true)) {
-                                sw.WriteLine(database + " " + File.GetLastAccessTime(database));
-                            }
-                        }
-                    }
+                    writeDatabaseAccessTimeToFile(filePath, database);
                     break;
                 case "after":
-                    if (!File.Exists(filePath)) {
-                        using (File.Open(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite)) {
-                            using (StreamWriter sw = new StreamWriter(filePath)) {
-                                sw.WriteLine(database + " " + File.GetLastAccessTime(database));
-                            }
-                        }
-                    } else if (File.Exists(filePath)) {
-                        using (File.Open(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite)) {
-                            using (var sw = new StreamWriter(filePath, true)) {
-                                sw.WriteLine(database + " " + File.GetLastAccessTime(database));
-                            }
-                        }
-                    }
+                    writeDatabaseAccessTimeToFile(filePath, database);
                     break;
                 default:
-                    throw new ArgumentException("No valid mode was selected");
+                    throw new ArgumentException("No valid mode was given. Valid modes are before and after");
+            }
+        }
+    }
+
+    public void writeDatabaseAccessTimeToFile(string filePath, string database) {
+        if (!File.Exists(filePath)) {
+            using (File.Open(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite)) {
+                using (StreamWriter sw = new StreamWriter(filePath)) {
+                    sw.WriteLine(database + " " + File.GetLastAccessTime(database));
+                }
+            }
+        } else if (File.Exists(filePath)) {
+            using (File.Open(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite)) {
+                using (var sw = new StreamWriter(filePath, true)) {
+                    sw.WriteLine(database + " " + File.GetLastAccessTime(database));
+                }
             }
         }
     }
