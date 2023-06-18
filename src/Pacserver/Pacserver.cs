@@ -66,14 +66,18 @@ public class PacserverUtils {
         if (!File.Exists(filePath)) {
             using (File.Open(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite)) {
                 using (StreamWriter sw = new StreamWriter(filePath)) {
-                    sw.WriteLine("");
+                    foreach (string package in packageNamesAndVersion) {
+                        sw.WriteLine(package);
+                    }
                 }
             }
         } else if (File.Exists(filePath)) {
             File.Delete(filePath);
             using (File.Open(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite)) {
                 using (var sw = new StreamWriter(filePath)) {
-                    sw.WriteLine("");
+                    foreach (string package in packageNamesAndVersion) {
+                        sw.WriteLine(package);
+                    }
                 }
             }
         }
