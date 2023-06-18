@@ -22,8 +22,8 @@ public class checkForNewerStuffTest {
         utils.readPacmanConfig();
 
         // Act
-        utils.getEveryPackageNameAndVersionViaFolderName("/tmp/before_update.txt");
-        utils.getEveryPackageNameAndVersionViaFolderName("/tmp/after_update.txt");
+        utils.getEveryPackageNameAndVersion("before", "/tmp/packages_before.txt");
+        utils.getEveryPackageNameAndVersion("after", "/tmp/packages_after.txt");
 
         // Assert
         File.Exists("/tmp/before_update.txt").Should().BeTrue();
@@ -35,7 +35,7 @@ public class checkForNewerStuffTest {
         // Arrange
         PacserverUtils utils = new PacserverUtils();
         utils.readPacmanConfig();
-        utils.getEveryPackageNameAndVersionViaFolderName("/tmp/before_update.txt");
+        utils.getEveryPackageNameAndVersion("before", "/tmp/packages_before.txt");
 
         // Act
         List<String> packageList = utils.packageNamesAndVersion;
@@ -52,7 +52,7 @@ public class checkForNewerStuffTest {
         utils.pacmanDatabaseDirectory = "/tmp/";
 
         // Act
-        Action act = () => utils.getEveryPackageNameAndVersionViaFolderName("/tmp/before_update.txt");
+        Action act = () => utils.getEveryPackageNameAndVersion("before", "/tmp/packages_before.txt");
 
         // Assert
         act.Should().Throw<Exception>().WithMessage("How did you execute this without any packages?");
