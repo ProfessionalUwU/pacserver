@@ -6,7 +6,7 @@ public class Program {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("Please specify an option.");
             Console.ResetColor();
-            Console.WriteLine("Possible options are: determinePacmanCacheDirectory, packagesBefore, packagesAfter, diffPackages, databasesBefore, databasesAfter, diffDatabases");
+            Console.WriteLine("Possible options are: determinePacmanCacheDirectory, packagesBefore, packagesAfter, diffPackages, databasesBefore, databasesAfter, diffDatabases, filter");
             return;
         }
 
@@ -27,7 +27,7 @@ public class Program {
                 break;
             case "diffPackages":
                 utils.diff("/tmp/before_update.txt", "/tmp/after_update.txt");
-                string packages = string.Join(",", utils.diffOfPackagesOrDatabases);
+                string packages = string.Join("\n", utils.diffOfPackagesOrDatabases);
                 Console.WriteLine(packages);
                 break;
             case "databasesBefore":
@@ -40,14 +40,20 @@ public class Program {
                 break;
             case "diffDatabases":
                 utils.diff("/tmp/databases_before.txt", "/tmp/databases_after.txt");
-                string databases = string.Join(",", utils.diffOfPackagesOrDatabases);
+                string databases = string.Join("\n", utils.diffOfPackagesOrDatabases);
                 Console.WriteLine(databases);
+                break;
+            case "filter":
+                utils.diff("/tmp/databases_before.txt", "/tmp/databases_after.txt");
+                utils.filterDiffOutputForDatabases();
+                string filteredDatabases = string.Join("\n", utils.databasesToTransfer);
+                Console.WriteLine(filteredDatabases);
                 break;
             default:
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(args[0] + " is not a recognized option.");
                 Console.ResetColor();
-                Console.WriteLine("Possible options are: determinePacmanCacheDirectory");
+                Console.WriteLine("Possible options are: determinePacmanCacheDirectory, packagesBefore, packagesAfter, diffPackages, databasesBefore, databasesAfter, diffDatabases, filter");
                 break;
         }
     }
