@@ -3,8 +3,8 @@ using System.Text.RegularExpressions;
 
 namespace Pacserver.Utils;
 public class PacserverUtils {
-    public string pacmanCacheDirectory { get; set; } = string.Empty;
-    public static string pacmanDatabaseDirectory { get; set; } = string.Empty;
+    public string pacmanCacheDirectory = string.Empty;
+    public string pacmanDatabaseDirectory = string.Empty;
     public static List<String> pathsToDetermine = new List<String>() { "CacheDir", "DBPath" };
     public void readPacmanConfig() {
         using (StreamReader file = new StreamReader("/etc/pacman.conf")) {
@@ -36,8 +36,61 @@ public class PacserverUtils {
         }
     }
 
-    public void checkForNewerPackagesAndDatabases() {
+    public List<String> packageNamesAndVersion = new List<String>();
+    public void getEveryPackageNameAndVersionViaFolderName(string filePath) {
+        string[] directories = Directory.GetDirectories(pacmanDatabaseDirectory + "local/");
+        foreach (string directory in directories) {
+            packageNamesAndVersion.Add(new DirectoryInfo(directory).Name);
+        }
 
+        if (packageNamesAndVersion.Capacity > 0) {
+            File.WriteAllLines(filePath, packageNamesAndVersion);
+        } else {
+            throw new Exception("How did you execute this without any packages?");
+        }
+    }
+
+    public List<String> diffOfPackagesOrDatabases = new List<String>();
+    public void diff(string before, string after) {
+        if (File.Exists(before) && File.Exists(after)) {
+            diffOfPackagesOrDatabases = File.ReadAllLines(after).Except(File.ReadLines(before)).ToList();
+        } else {
+            throw new FileNotFoundException("Necessary files could not be found");
+        }
+    }
+
+    public List<String> databases = new List<String>();
+    public void checkIfDatabasesWereModified(string mode, string filePath) {
+        string[] databases = Directory.GetFiles(pacmanDatabaseDirectory + "sync/");
+
+        foreach (string database in databases) {
+            switch (mode) {
+                case "before":
+                    writeDatabaseAccessTimeToFile(filePath, database);
+                    break;
+                case "after":
+                    writeDatabaseAccessTimeToFile(filePath, database);
+                    break;
+                default:
+                    throw new ArgumentException("No valid mode was given. Valid modes are before and after");
+            }
+        }
+    }
+
+    public void writeDatabaseAccessTimeToFile(string filePath, string database) {
+        if (!File.Exists(filePath)) {
+            using (File.Open(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite)) {
+                using (StreamWriter sw = new StreamWriter(filePath)) {
+                    sw.WriteLine(database + " " + File.GetLastAccessTime(database));
+                }
+            }
+        } else if (File.Exists(filePath)) {
+            using (File.Open(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite)) {
+                using (var sw = new StreamWriter(filePath, true)) {
+                    sw.WriteLine(database + " " + File.GetLastAccessTime(database));
+                }
+            }
+        }
     }
 
     private static List<String> newerPackagesAndDatabases = new List<String>();
