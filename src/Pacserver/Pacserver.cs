@@ -104,18 +104,13 @@ public class PacserverUtils {
     }
 
     public void writeDatabaseAccessTimeToFile(string filePath, string database) {
-        if (!File.Exists(filePath)) {
-            using (File.Open(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite)) {
-                using (StreamWriter sw = new StreamWriter(filePath)) {
-                    sw.WriteLine(database + " " + File.GetLastAccessTime(database));
-                }
-            }
-        } else if (File.Exists(filePath)) {
+        if (File.Exists(filePath)) {
             File.Delete(filePath);
-            using (File.Open(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite)) {
-                using (var sw = new StreamWriter(filePath)) {
-                    sw.WriteLine(database + " " + File.GetLastAccessTime(database));
-                }
+        }
+
+        using (File.Open(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite)) {
+            using (StreamWriter sw = new StreamWriter(filePath)) {
+                sw.WriteLine(database + " " + File.GetLastAccessTime(database));
             }
         }
     }
