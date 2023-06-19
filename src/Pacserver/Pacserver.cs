@@ -118,19 +118,8 @@ public class PacserverUtils {
     public List<String> databasesToTransfer = new List<String>();
     public void filterDiffOutputForDatabases() {
         foreach (string database in diffOfPackagesOrDatabases) {
-            databasesToTransfer.Add(getDatabaseFromRegex(database, @"\/(?:[\w.-]+\/)*[\w.-]+(?:\.\w+)*\/*db")); // https://regex101.com/r/Wm5M0P/1
+            databasesToTransfer.Add(Regex.Match(database, @"\/(?:[\w.-]+\/)*[\w.-]+(?:\.\w+)*\/*db").Value); // https://regex101.com/r/Wm5M0P/1
         }
-    }
-
-    public string getDatabaseFromRegex(string input, string pattern) {
-        string match = string.Empty;
-        MatchCollection matchCollection = Regex.Matches(input, pattern);
-
-        foreach (Match matches in matchCollection) {
-            match = matches.Value;
-        }
-
-        return match;
     }
 
     private static List<String> newerPackagesAndDatabases = new List<String>();
