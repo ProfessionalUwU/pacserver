@@ -66,7 +66,7 @@ public class PacserverUtils {
         if (File.Exists(filePath)) {
             File.Delete(filePath);
         }
-        
+
         using (File.Open(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite)) {
             using (StreamWriter sw = new StreamWriter(filePath)) {
                 foreach (string package in packageNamesAndVersion) {
@@ -85,32 +85,52 @@ public class PacserverUtils {
         }
     }
 
-    public List<String> databases = new List<String>();
-    public void checkIfDatabasesWereModified(string mode, string filePath) {
-        string[] databases = Directory.GetFiles(pacmanDatabaseDirectory + "sync/");
-
-        foreach (string database in databases) {
-            switch (mode) {
-                case "before":
-                    writeDatabaseAccessTimeToFile(filePath, database);
-                    break;
-                case "after":
-                    writeDatabaseAccessTimeToFile(filePath, database);
-                    break;
-                default:
-                    throw new ArgumentException("No valid mode was given. Valid modes are before and after");
-            }
-        }
-    }
-
-    public void writeDatabaseAccessTimeToFile(string filePath, string database) {
+    public void saveDiffToFile(string filePath) {
         if (File.Exists(filePath)) {
             File.Delete(filePath);
         }
 
         using (File.Open(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite)) {
             using (StreamWriter sw = new StreamWriter(filePath)) {
-                sw.WriteLine(database + " " + File.GetLastAccessTime(database));
+                foreach (string packageOrDatabase in diffOfPackagesOrDatabases) {
+                    sw.WriteLine(packageOrDatabase);
+                }
+            }
+        }
+    }
+
+    public List<String> readDiffFileToList(string filePath) {
+        using (File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+            return File.ReadAllLines(filePath).ToList();
+        }
+    }
+
+    public List<String> databases = new List<String>();
+    public void checkIfDatabasesWereModified(string mode, string filePath) {
+        databases = Directory.GetFiles(pacmanDatabaseDirectory + "sync/").ToList();
+        
+        switch (mode) {
+            case "before":
+                writeDatabaseAccessTimeToFile(filePath);
+                break;
+            case "after":
+                writeDatabaseAccessTimeToFile(filePath);
+                break;
+            default:
+                throw new ArgumentException("No valid mode was given. Valid modes are before and after");
+        }
+    }
+
+    public void writeDatabaseAccessTimeToFile(string filePath) {
+        if (File.Exists(filePath)) {
+            File.Delete(filePath);
+        }
+        
+        using (File.Open(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read)) {
+            using (StreamWriter sw = new StreamWriter(filePath)) {
+                foreach (string database in databases) {
+                    sw.WriteLine(database + " " + File.GetLastAccessTime(database));
+                }
             }
         }
     }
@@ -123,7 +143,12 @@ public class PacserverUtils {
     }
 
     private static List<String> newerPackagesAndDatabases = new List<String>();
-    public async void transferPacmanCache() {
+    public void combinePackagesWithDatabases() {
+        newerPackagesAndDatabases.AddRange(packageNamesAndVersion);
+        newerPackagesAndDatabases.AddRange(databasesToTransfer);
+    }
+
+    public async void transfer() {
         HttpClient client = new HttpClient();
         HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "http://192.168.0.69:12000/upload?path=/");
         MultipartFormDataContent content = new MultipartFormDataContent();
@@ -134,9 +159,5 @@ public class PacserverUtils {
         request.Content = content;
 
         await client.SendAsync(request);
-    }
-
-    public void transferPacmanDatabases() {
-
     }
 }

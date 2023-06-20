@@ -10,7 +10,7 @@ public class TranserFilesTest {
 
         // Act
         utils.readPacmanConfig();
-        utils.transferPacmanCache();
+        utils.transfer();
 
         // Assert
         //Assert.NotEmpty(Directory.GetFiles("/home/rene/test/"));
