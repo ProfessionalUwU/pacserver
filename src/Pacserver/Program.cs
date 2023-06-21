@@ -1,6 +1,9 @@
 ﻿using Pacserver.Utils;
 
 public class Program {
+
+    protected Program() {
+    }
     static void Main(string[] args) {
         if (args.Length == 0) {
             Console.ForegroundColor = ConsoleColor.Red;
@@ -11,28 +14,31 @@ public class Program {
         }
 
         PacserverUtils utils = new PacserverUtils();
+        utils.prerequisites();
         utils.readPacmanConfig();
 
         switch (args[0]) {
             case "before":
-                utils.getEveryPackageNameAndVersion("before", "/tmp/packages_before.txt");
-                utils.checkIfDatabasesWereModified("before", "/tmp/databases_before.txt");
+                utils.getEveryPackageNameAndVersion("before", utils.pacserverDirectory + "packages_before.txt");
+                utils.checkIfDatabasesWereModified("before", utils.pacserverDirectory + "databases_before.txt");
                 break;
             case "after":
-                utils.getEveryPackageNameAndVersion("after", "/tmp/packages_after.txt");
-                utils.checkIfDatabasesWereModified("after", "/tmp/databases_after.txt");
+                utils.getEveryPackageNameAndVersion("after", utils.pacserverDirectory + "packages_after.txt");
+                utils.checkIfDatabasesWereModified("after", utils.pacserverDirectory + "databases_after.txt");
 
-                utils.diff("/tmp/packages_before.txt", "/tmp/packages_after.txt");
-                utils.saveDiffToFile("/tmp/package_diff.txt");
+                utils.diff(utils.pacserverDirectory + "packages_before.txt", utils.pacserverDirectory + "packages_after.txt");
+                utils.saveDiffToFile(utils.pacserverDirectory + "package_diff.txt");
 
-                utils.diff("/tmp/databases_before.txt", "/tmp/databases_after.txt");
-                utils.saveDiffToFile("/tmp/database_diff.txt");
+                utils.diff(utils.pacserverDirectory + "databases_before.txt", utils.pacserverDirectory + "databases_after.txt");
+                utils.saveDiffToFile(utils.pacserverDirectory + "database_diff.txt");
                 utils.filterDiffOutputForDatabases();
 
-                utils.packageNamesAndVersion = utils.readDiffFileToList("/tmp/package_diff.txt");
+                utils.packageNamesAndVersion = utils.readDiffFileToList(utils.pacserverDirectory + "package_diff.txt");
 
                 utils.combinePackagesWithDatabases();
                 utils.transfer();
+
+                utils.cleanup();
                 break;
             default:
                 Console.ForegroundColor = ConsoleColor.Red;

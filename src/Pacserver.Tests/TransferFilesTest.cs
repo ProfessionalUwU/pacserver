@@ -10,9 +10,9 @@ public class TranserFilesTest {
 
         // Act
         utils.readPacmanConfig();
-        utils.transfer();
+        Action act = () => utils.transfer();
 
         // Assert
-        //Assert.NotEmpty(Directory.GetFiles("/home/rene/test/"));
+        act.Should().NotThrow();
     }
 }
