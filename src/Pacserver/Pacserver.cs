@@ -33,22 +33,21 @@ public partial class PacserverUtils {
             string? line;
 
             while ((line = file.ReadLine()) is not null) {
-                foreach (string path in pathsToDetermine.Where(path => line.Contains(path))) {
+                string cachePath = pathsToDetermine[0];
+                string dbPath = pathsToDetermine[1];
+
+                if (line.Contains(cachePath) || line.Contains(dbPath)) {
                     Match match = CacheDirOrDBPathRegex().Match(line);
-                    if (match.Success) {
-                        switch (path) {
-                            case "CacheDir":
-                                pacmanCacheDirectory = match.ToString();
-                                break;
-                            case "DBPath":
-                                pacmanDatabaseDirectory = match.ToString();
-                                break;
-                            default:
-                                throw new ArgumentException("Could not deal with " + match.ToString());
-                        }
-                    } else {
+
+                    if(!match.Success) {
                         string pathsToDetermineString = string.Join(",", pathsToDetermine);
                         throw new DirectoryNotFoundException("Could not determine the necessary file paths: " + pathsToDetermineString);
+                    }
+                    
+                    if (line.Contains(cachePath)) {
+                        pacmanCacheDirectory = match.ToString();
+                    } else if (line.Contains(dbPath)) {
+                        pacmanDatabaseDirectory = match.ToString();
                     }
                 }
             }

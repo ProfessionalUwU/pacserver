@@ -4,7 +4,7 @@ namespace Pacserver.Tests;
 
 public class TranserFilesTest {
     [Fact]
-    public void transferPacmanCache_doesNotFail() {
+    public async void transferPacmanCache_doesNotFail() {
         // Arrange
         PacserverUtils utils = new PacserverUtils();
 
