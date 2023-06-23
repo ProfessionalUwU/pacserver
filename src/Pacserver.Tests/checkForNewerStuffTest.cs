@@ -21,7 +21,8 @@ public class checkForNewerStuffTest {
     public void getEveryPackageNameAndVersionViaFolderName_createsFiles() {
         // Arrange
         PacserverUtils utils = new PacserverUtils();
-        utils.readPacmanConfig();
+        Directory.CreateDirectory("/tmp/pacserverTest/");
+        utils.pacmanCacheDirectory = "/tmp/pacserverTest/";
 
         // Act
         utils.getEveryPackageNameAndVersion("before", utils.pacserverDirectory + "packages_before.txt");
@@ -33,17 +34,18 @@ public class checkForNewerStuffTest {
     }
 
     [Fact]
-    public void packageNamesAndVersion_notEmpty() {
+    public void packageNamesAndVersion_isEmpty() {
         // Arrange
         PacserverUtils utils = new PacserverUtils();
-        utils.readPacmanConfig();
+        Directory.CreateDirectory("/tmp/pacserverTest/");
+        utils.pacmanCacheDirectory = "/tmp/pacserverTest/";
         utils.getEveryPackageNameAndVersion("before", utils.pacserverDirectory + "packages_before.txt");
 
         // Act
-        List<String> packageList = utils.packageNamesAndVersion;
+        var packageList = utils.packageNamesAndVersion;
 
         // Assert
-        packageList.Should().NotBeNullOrEmpty();
+        packageList.Should().BeEmpty();
     }
 
     [Fact]

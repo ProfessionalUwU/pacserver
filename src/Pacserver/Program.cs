@@ -35,6 +35,7 @@ public class Program {
 
                 utils.packageNamesAndVersion = utils.readDiffFileToList(utils.pacserverDirectory + "package_diff.txt");
 
+                utils.getEverySigFile();
                 utils.combinePackagesWithDatabases();
                 utils.transfer();
 

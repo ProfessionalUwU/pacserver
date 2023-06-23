@@ -39,14 +39,14 @@ public partial class PacserverUtils {
                 if (!line.Contains(cachePath) && !line.Contains(dbPath)) {
                     continue;
                 }
-                
+
                 Match match = CacheDirOrDBPathRegex().Match(line);
 
-                if(!match.Success) {
+                if (!match.Success) {
                     string pathsToDetermineString = string.Join(",", pathsToDetermine);
                     throw new DirectoryNotFoundException("Could not determine the necessary file paths: " + pathsToDetermineString);
                 }
-                
+
                 if (line.Contains(cachePath)) {
                     pacmanCacheDirectory = match.ToString();
                 } else if (line.Contains(dbPath)) {
@@ -92,6 +92,17 @@ public partial class PacserverUtils {
                 foreach (string package in packageNamesAndVersion) {
                     sw.WriteLine(package);
                 }
+            }
+        }
+    }
+
+    public List<String> sigFiles = new List<String>();
+    [GeneratedRegex(@".+\.pkg\.tar\.zst\.sig$", RegexOptions.NonBacktracking)]
+    private static partial Regex onlyGetSigFiles();
+    public void getEverySigFile() {
+        if (Directory.Exists(pacmanCacheDirectory)) {
+            if (Directory.GetFiles(pacmanCacheDirectory) is not null) {
+                sigFiles = Directory.GetFiles(pacmanCacheDirectory).Where(file => onlyGetSigFiles().IsMatch(file)).ToList();
             }
         }
     }
@@ -168,6 +179,7 @@ public partial class PacserverUtils {
     public void combinePackagesWithDatabases() {
         newerPackagesAndDatabases.AddRange(packageNamesAndVersion);
         newerPackagesAndDatabases.AddRange(databasesToTransfer);
+        newerPackagesAndDatabases.AddRange(sigFiles);
     }
 
     public async Task transfer() {
